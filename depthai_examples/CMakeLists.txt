@@ -11,8 +11,7 @@ if(POLICY CMP0057)
     cmake_policy(SET CMP0057 NEW)
 endif()
 
-set(_opencv_version 4)
-find_package(OpenCV 4 QUIET COMPONENTS imgproc highgui)
+find_package(OpenCV 4.5.0 QUIET)
 if(NOT OpenCV_FOUND)
   message(STATUS "----------------Did not find OpenCV 4, trying OpenCV 3--------------")
   set(_opencv_version 3)
@@ -20,6 +19,21 @@ if(NOT OpenCV_FOUND)
 endif()
 find_package(depthai CONFIG REQUIRED)
 # find_package(depthai CONFIG REQUIRED PATHS "/home/sachin/Desktop/luxonis/depthai-core/build/install/lib/cmake/depthai")
+
+set(OpenCV_INCLUDE_DIRS
+  /usr/local/lib/cmake/opencv4
+  /usr/local/include/opencv4
+)
+
+set(OpenCV_LIB_DIR
+  /usr/local/lib
+)
+
+set(OpenCV_LIBS
+  opencv_core
+  opencv_highgui
+  opencv_imgcodecs
+)
 
 set(mobilenet_blob "${PROJECT_SOURCE_DIR}/resources/mobilenet-ssd_openvino_2021.2_6shave.blob")
 file(DOWNLOAD "https://artifacts.luxonis.com/artifactory/luxonis-depthai-data-local/network/mobilenet-ssd_openvino_2021.2_6shave.blob" 
@@ -66,15 +80,17 @@ if ( ament_cmake_FOUND )
   include_directories(
     include
     ${ament_INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS}
   )
+  link_directories(${OpenCV_LIB_DIR})
 
+  
   macro(dai_add_node_ros2 node_name node_src)
     add_executable("${node_name}" "${node_src}")
 
     target_link_libraries("${node_name}"  
                           depthai::core 
-                          opencv_imgproc
-                          opencv_highgui)
+                          ${OpenCV_LIBS})
 
     ament_target_dependencies("${node_name}"  
                               ${dependencies})    
@@ -160,8 +176,7 @@ elseif( CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE )
       target_link_libraries("${node_name}" 
         ${catkin_LIBRARIES}
         depthai::core
-        opencv_imgproc
-        opencv_highgui
+        ${OpenCV_LIBS}
       )
       
   endmacro() 
@@ -173,6 +188,7 @@ elseif( CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE )
     ${catkin_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
   )
+  link_directories(${OpenCV_LIB_DIR})
 
   add_library(nodelet_stereo ros1_src/stereo_nodelet.cpp)
 
@@ -183,8 +199,7 @@ elseif( CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE )
   target_link_libraries(nodelet_stereo
     ${catkin_LIBRARIES}
     depthai::core
-    opencv_imgproc
-    opencv_highgui
+    ${OpenCV_LIBS}
   )
 
   dai_add_node(crop_control_service ros1_src/crop_control_service.cpp)
