@@ -60,7 +60,7 @@ if ( ament_cmake_FOUND )
   find_package(camera_info_manager REQUIRED)
   find_package(cv_bridge REQUIRED
   NO_DEFAULT_PATH
-  PATHS /home/irene/programming/cvbridge_ws/devel_isolated/cv_bridge/share/cv_bridge/)
+  PATHS /home/irene/programming/cv_ws/devel/share/cv_bridge/)
   find_package(depthai_ros_msgs REQUIRED)
   find_package(depthai_bridge REQUIRED)
   find_package(rclcpp REQUIRED)
@@ -161,7 +161,7 @@ elseif( CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE )
   )
   find_package(cv_bridge REQUIRED
   NO_DEFAULT_PATH
-  PATHS /home/irene/programming/cvbridge_ws/devel_isolated/cv_bridge/share/cv_bridge/)
+  PATHS /home/irene/programming/cv_ws/devel/share/cv_bridge/)
   
   catkin_package(
     # INCLUDE_DIRS include
